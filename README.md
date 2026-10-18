@@ -1,11 +1,11 @@
 # CS2 Utility Analytics — POC
 
 Proof-of-concept: что можно сказать игроку CS2 про его игру, имея только данные
-о бросках гранат (10,000 матчей Premier/MM на Cache). Задача — `task.md`.
+о бросках гранат (10,000 матчей Premier/MM на Cache). Задача — [`task.md`](task.md).
 
 ## Окружение
 
-Зависимости и venv — через [Poetry](https://python-poetry.org/) (`pyproject.toml` / `poetry.lock`).
+Зависимости и venv — через [Poetry](https://python-poetry.org/) ([`pyproject.toml`](pyproject.toml) / [`poetry.lock`](poetry.lock)).
 
 ```bash
 poetry install
@@ -27,23 +27,30 @@ docs/                               # справочники и выводы, с
 
 | Файл | Что внутри |
 |---|---|
-| `eda.ipynb` | Исходный разведочный анализ: разбор датасета поле за полем, парное сравнение признаков, корреляции по типам гранат. Строит кэш `data/processed/{throws,damage,flashed,players}.parquet`, который читают все остальные ноутбуки. |
-| `player_utility_analysis.ipynb` | Best-case демонстрация: разбор одного игрока с максимумом доступных данных (9 матчей, 310 бросков) — микс гранат, эффективность флешей/HE/молотова, консистентность смок-лайнапов (DBSCAN), тайминг по раунду, выводы с конкретными рекомендациями и ссылками на инструменты SCOPE.GG. |
-| `rating_cohort_analysis.ipynb` | Популяционный анализ: все пары «игрок–матч» с известным рейтингом (24.4% датасета) бьются на 5 квантильных бинов, для каждого бина считается профиль по 17 утилити-метрикам с 95%-ным доверительным интервалом. Экспортирует `data/processed/rating_bin_profiles.parquet`. |
-| `player_rating_bin_report.ipynb` | Typical-case демонстрация: реалистичный игрок (медиана по активности — 2 матча, 53 броска) сравнивается с профилем своего рейтинг-бина; если рейтинга нет — бин оценивается по поведению (нестрогая оценка, см. ниже). |
+| [`eda.ipynb`](notebooks/eda.ipynb) | Исходный разведочный анализ: разбор датасета поле за полем, парное сравнение признаков, корреляции по типам гранат. Строит кэш `data/processed/{throws,damage,flashed,players}.parquet`, который читают все остальные ноутбуки. |
+| [`player_utility_analysis.ipynb`](notebooks/player_utility_analysis.ipynb) | Best-case демонстрация: разбор одного игрока с максимумом доступных данных (9 матчей, 310 бросков) — микс гранат, эффективность флешей/HE/молотова, консистентность смок-лайнапов (DBSCAN), тайминг по раунду, выводы с конкретными рекомендациями и ссылками на инструменты SCOPE.GG. |
+| [`rating_cohort_analysis.ipynb`](notebooks/rating_cohort_analysis.ipynb) | Популяционный анализ: все пары «игрок–матч» с известным рейтингом (24.4% датасета) бьются на 5 квантильных бинов, для каждого бина считается профиль по 17 утилити-метрикам с 95%-ным доверительным интервалом. Экспортирует `data/processed/rating_bin_profiles.parquet`. |
+| [`player_rating_bin_report.ipynb`](notebooks/player_rating_bin_report.ipynb) | Typical-case демонстрация: реалистичный игрок (медиана по активности — 2 матча, 53 броска) сравнивается с профилем своего рейтинг-бина; если рейтинга нет — бин оценивается по поведению (нестрогая оценка, см. ниже). |
 
-Зависимость: `eda.ipynb` → кэш parquet → `rating_cohort_analysis.ipynb` → `rating_bin_profiles.parquet` → `player_rating_bin_report.ipynb`. `player_utility_analysis.ipynb` зависит только от кэша `eda.ipynb`.
+Зависимость: [`eda.ipynb`](notebooks/eda.ipynb) → кэш parquet → [`rating_cohort_analysis.ipynb`](notebooks/rating_cohort_analysis.ipynb) → `rating_bin_profiles.parquet` → [`player_rating_bin_report.ipynb`](notebooks/player_rating_bin_report.ipynb). [`player_utility_analysis.ipynb`](notebooks/player_utility_analysis.ipynb) зависит только от кэша `eda.ipynb`.
 
 ## Документация (`docs/`)
 
 | Файл | Содержание |
 |---|---|
-| `scope_gg_products_research.md` | Ресерч реальных продуктов SCOPE.GG (Grenade Predictor, CS2 Dashboard, Demo Viewer, Comparing tool) — на какие из них ссылаются рекомендации в ноутбуках, и чего у SCOPE.GG нет (aim/movement-trainer). |
-| `metrics_reference.md` | Справочник всех метрик из трёх аналитических ноутбуков: что значит каждая колонка, где NaN ≠ 0, и честные оговорки (например «0 урона по HE не обязательно плохой бросок»). |
-| `player_selection_policy.md` | Почему `player_utility_analysis.ipynb` и `player_rating_bin_report.ipynb` выбирают разных демонстрационных игроков и по какому явному программному правилу — не вручную. |
-| `poc_findings_summary.md` | Главный вывод POC и ограничение, которое нельзя обойти на этом датасете (см. ниже). |
+| [`scope_gg_products_research.md`](docs/scope_gg_products_research.md) | Ресерч реальных продуктов SCOPE.GG (Grenade Predictor, CS2 Dashboard, Demo Viewer, Comparing tool) — на какие из них ссылаются рекомендации в ноутбуках, и чего у SCOPE.GG нет (aim/movement-trainer). |
+| [`metrics_reference.md`](docs/metrics_reference.md) | Справочник всех метрик из трёх аналитических ноутбуков: что значит каждая колонка, где NaN ≠ 0, и честные оговорки (например «0 урона по HE не обязательно плохой бросок»). |
+| [`player_selection_policy.md`](docs/player_selection_policy.md) | Почему `player_utility_analysis.ipynb` и `player_rating_bin_report.ipynb` выбирают разных демонстрационных игроков и по какому явному программному правилу — не вручную. |
+| [`poc_findings_summary.md`](docs/poc_findings_summary.md) | Главный вывод POC и ограничение, которое нельзя обойти на этом датасете (см. ниже). |
 
 ## Главные результаты
+
+**Что было сделано:** все пары «игрок–матч» с известным рейтингом (24.4% датасета, [`rating_cohort_analysis.ipynb`](notebooks/rating_cohort_analysis.ipynb))
+разбили на 5 бинов по квантилям `PremierRatingNew` — B1 (самый низкий рейтинг) ... B5 (самый высокий). Для каждого
+бина посчитали профиль по 17 утилити-метрикам (микс гранат, эффективность флешей/HE/молотова, тайминг по раунду —
+полный список с определениями в [`docs/metrics_reference.md`](docs/metrics_reference.md)) и проверили, насколько сильно каждая метрика отличает
+B1 от B5 (в единицах внутрибинового стандартного отклонения — `SEPARATION`). Детали метода, формул и полная версия
+вывода — [`docs/poc_findings_summary.md`](docs/poc_findings_summary.md).
 
 **Утилити почти не разделяет рейтинговые бины.** Из 17 метрик только `nades_per_round`
 (гранат за раунд) показывает содержательную разницу между низким и высоким бином
@@ -73,7 +80,7 @@ docs/                               # справочники и выводы, с
 **Что это доказывает как POC:** pipeline «данные → метрики → бины → сравнение игрока →
 рекомендации со ссылкой на реальные инструменты» работает и честно проверяет сам себя на шум
 (доверительные интервалы, accuracy классификатора против chance-уровня), а не выдаёт
-переобученную уверенность там, где сигнала почти нет. Подробности — `docs/poc_findings_summary.md`.
+переобученную уверенность там, где сигнала почти нет. Подробности — [`docs/poc_findings_summary.md`](docs/poc_findings_summary.md).
 
 ### Текущих данных недостаточно, чтобы полноценно советовать игроку, как расти
 
@@ -108,7 +115,7 @@ docs/                               # справочники и выводы, с
 а не усреднённый совет "кидай меньше пустых флешек".
 
 **Но и в рамках того, что есть, пользу извлечь можно** — POC это показывает на
-`player_rating_bin_report.ipynb`: для обычного игрока с 2 матчами и 53 бросками
+[`player_rating_bin_report.ipynb`](notebooks/player_rating_bin_report.ipynb): для обычного игрока с 2 матчами и 53 бросками
 выведен честный человекочитаемый отчёт (раздел 9.3 этого ноутбука) с конкретными цифрами по его же броскам ("45% твоих HE не нанесли
 урона, у игроков твоего уровня — 63%") и прямой ссылкой, каким инструментом SCOPE.GG
 это поправить (Grenade Predictor, Demo Viewer, CS2 Dashboard → My Progress, Comparing
